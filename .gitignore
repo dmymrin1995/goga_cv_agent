@@ -1,0 +1,7 @@
+.venv
+runs/
+
+*.pt
+*.png
+*.jpg
+*.jpeg
