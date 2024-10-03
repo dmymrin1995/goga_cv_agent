@@ -1,59 +1,40 @@
-from langchain.chat_models.gigachat import GigaChat
-from langchain.agents import AgentExecutor, create_gigachat_functions_agent
-from langchain.tools import tool
-from ultralytics import YOLO
-
-model = YOLO("yolov8n.pt")
-
-giga = GigaChat(
-    credentials="", 
-    scope="GIGACHAT_API_PERS", 
-    model="GigaChat", 
-    verify_ssl_certs=False)
-
-# print(giga.invoke("Привет"))
-
-@tool
-def search_on_image(path_to_file: str, class_names: str) -> int:
-    """
-        Находит на изображении объекты заданных классов
-
-    Args:
-       path_to_file (str): путь к изображению
-       class_names (str): имена классов через запятую
-    """
-    class_dict = {
-        "кошка": 15,
-        "собака": 16,
-        "люди": 0,
-        "рюкзак": 24,
-        "человек": 0,
-        "person": 0,
-        "backpack": 24
-
-    }
-
-    target_classes = []
-
-    for cls in class_names.split(","):
-        target_classes.append(class_dict[cls.strip()])
-
-
-    result = model(path_to_file, save=True, classes=target_classes)
-
-new_tools = [search_on_image]
-
-
-agent = create_gigachat_functions_agent(giga, new_tools)
-
-agent_executor = AgentExecutor(
-    agent=agent,
-    tools=new_tools,
-    verbose=True,
+from langchain_core.messages import(
+    SystemMessage,
+    AIMessage,
+    HumanMessage
 )
 
+from model import agent_executor
+
+system = """
+    Ты робот помощник специалиста по компьютерному зрению. Твоя задача запускать поиск объектов на изображении по запросу пользователя
+    Для этого у тебя есть следующие инструменты:
+        image_paths_tool - инструмент предназначеный для того что бы искать пути к изображениям в рабочей папке используй функцию       
+        classes_exctrater_tool - интсрумент презназначеный для того что бы извлекать названия классов используй функцию
+        cv_predict_tool - инструмент предназначеный для того что бы запустить поиск классов 
+
+    Если пользователь просит тебя найти пути к изображениям, не генерируй случайные имена и не выдумывай свои собственные пути а используй путь по умолчанию
+"""
+
+chat_memory = [
+    SystemMessage(content=system)
+]
 while True:
-    user_query = input()
-    agent_executor.invoke(
-        {"input": user_query}
-    )["output"]
+    user_query = input("User: ")
+    if user_query == "":
+        break
+    else:
+            
+        result = agent_executor.invoke(
+            {   
+                "chat_history": chat_memory,
+                "input": user_query
+            }
+        )
+    
+    chat_memory.append(HumanMessage(content=user_query))
+    chat_memory.append(AIMessage(content=result["output"]))
+    
+    print(f"Bot: {result['output']}")
+    
+        
