@@ -3,8 +3,11 @@ from langchain.agents import AgentExecutor, create_gigachat_functions_agent
 
 from agent_tools import ClassesExtractTool, CVPredictTool, ImagePathsTool
 
+with open("credentials.txt", 'r') as f:
+    credentials = f.read()
+
 giga = GigaChat(
-    credentials="ZWMzMWNmZjktNWE5Ny00MTdmLTkwZGUtNTQxZWFmOTE4NTRlOmVkOTFkNDYxLTRlYzktNDBjYy1iY2EwLWYyMGRhZTJiZTVmMA==", 
+    credentials=credentials, 
     scope="GIGACHAT_API_PERS", 
     model="GigaChat",
     function_call=True,

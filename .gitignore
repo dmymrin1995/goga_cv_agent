@@ -1,7 +1,12 @@
+# dirs
 .venv
 runs/
 __pycache__
 
+#sequre
+credentials.txt
+
+#files
 *.pt
 *.png
 *.jpg
