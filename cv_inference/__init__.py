@@ -1,0 +1,1 @@
+from .cv_inference import make_predict

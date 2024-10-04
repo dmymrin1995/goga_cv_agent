@@ -1,7 +1,7 @@
 import os
 
 from agent_tools import *
-from cv_inference.cv_inference import cv_model
+from cv_inference import make_predict
 
 
 class CVPredictInput(BaseModel):
@@ -113,20 +113,21 @@ class CVPredictTool(BaseTool):
     def _run(
         self, found_clss: str, files: str , run_manager: Optional[CallbackManagerForToolRun] = None
     ):
-        filtred_clases = []
+        if found_clss == 'None':
+            found_clss = None
+        else:
+            filtred_clases = []
+            classes_list = found_clss.split(",")
+            
+            for cls in classes_list:
+                for key, val in self.cls_dict.items():
+                    if cls.strip() == val:
+                        filtred_clases.append(int(key)) 
+        files = files.split(",")
+        predicts = []
+        for file in files:
+            predict = make_predict(file, classes=filtred_clases)
+            predicts.append(predict)
+            
         
-        classes_list = found_clss.split(",")
-         
-        for cls in classes_list:
-            for key, val in self.cls_dict.items():
-                if cls.strip() == val:
-                   filtred_clases.append(int(key)) 
-        
-        files = [
-            os.path.join(r"C:\Users\dmymrin1995\Documents\goga_cv_agent\images", file) 
-                for file in files.split(",") if file.endswith((".jpg", ".png"))]
-        
-        if found_clss:
-            predict = cv_model.predict(files, classes=filtred_clases)
-            if predict[0].boxes:
-                return f"Классы {filtred_clases} найдены"
+        return predicts
