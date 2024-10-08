@@ -4,8 +4,9 @@ from agent_tools import *
 
 class AllFilesInput(BaseModel):
     image_path: str = Field(
+        default='../images',
         description="""
-            Путь к рабочей папке который всегда равен '../goga_cv_agent/images'
+            Путь к рабочей папке, ВСЕГДА равно ../images'
         """
     )
 

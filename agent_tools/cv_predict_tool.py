@@ -1,8 +1,23 @@
 import os
+import json
+import uuid
 
 from agent_tools import *
 from cv_inference import make_predict
 
+def save_to_json_file(data, filename='predictions.json'):
+    unique_id = str(uuid.uuid4())
+
+    try:
+        with open(filename, 'r') as file:
+            existing_data = json.load(file)
+    except FileNotFoundError:
+        existing_data = {}
+
+    existing_data[unique_id] = data
+
+    with open(filename, 'w') as file:
+        json.dump(existing_data, file, indent=4)
 
 class CVPredictInput(BaseModel):
     
@@ -21,7 +36,7 @@ class CVPredictTool(BaseTool):
     
     name = "cv_predict_tool"
     description ="""
-        Поиск необходимых пользователю классов, на изображениях в рабочей папке
+        Поиск необходимых пользователю классов, на изображениях в рабочей папке и сохраняет результаты в JSON файл
         В качестве аргументов принимает два значения:
             found_clss: str - строка с пречеслением всех классов, необходимых пользователю через запятую
             files: str  - строка с перечеслением всех файлов в рабочей папке.
@@ -124,10 +139,8 @@ class CVPredictTool(BaseTool):
                     if cls.strip() == val:
                         filtred_clases.append(int(key)) 
         files = files.split(",")
-        predicts = []
         for file in files:
-            predict = make_predict(file, classes=filtred_clases)
-            predicts.append(predict)
-            
+            predicts = make_predict(file, classes=filtred_clases)
+            for p in predicts:
+                save_to_json_file(p)
         
-        return predicts
