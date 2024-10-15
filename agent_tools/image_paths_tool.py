@@ -4,9 +4,9 @@ from agent_tools import *
 
 class AllFilesInput(BaseModel):
     image_path: str = Field(
-        default='../images',
+        default='../images/',
         description="""
-            Путь к рабочей папке, ВСЕГДА равно ../images'
+            Путь к рабочей папке, ВСЕГДА равно ../images/'
         """
     )
 

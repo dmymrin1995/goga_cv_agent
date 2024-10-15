@@ -1,6 +1,7 @@
 # dirs
 .venv
 runs/
+trash
 __pycache__
 
 #sequre

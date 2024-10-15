@@ -26,13 +26,47 @@ class InfoInput(BaseModel):
     )
 
 
-class InfoTool (BaseTool):
+class LastPredictInfoTool (BaseTool):
     
-    name = "info_tool"
+    name = "Last_Predict_Info_tool"
     description ="""
-        Возвращает результаты поиска объектов на изображениях
         Примает:
-            db_path: str  путь к json файлу
+            db_path: str  путь к json файлу, с результатами поиска
+        
+        Инструмент предназначет для вывода пользователю результатов поиска.
+        
+        Пример результата поиска:
+        "83e6b5ba-26e3-410d-99ff-3a5fb204558b": {
+            "predict_time": "2024-10-08 15:41:33",
+            "image": {
+                "name": "img.jpg",
+                "objects": [
+                    {
+                        "object0": {
+                            "class": "cat",
+                            "cofidence": 0.6
+                        }
+                    },
+                    {
+                    "object1": {
+                        "class": "car",
+                        "cofidence": 0.83
+                        }
+                    },
+                ]
+            }
+        }
+        
+        Ответ пользователю всегда должен выглядеть так:
+        На изображении {predict_id["image"]["name"]} я нашел следующией объекты:
+            {object0['class']} с достоверностью {object0['cofidence']}
+            {object1['class']} с достоверностью {object1['cofidence']}
+            {object2['class']} с достоверностью {object3['cofidence']}
+        
+        На изображении {predict_id["image"]["name"]} я нашел следующией объекты:
+            {object0['class']} с достоверностью {object0['cofidence']}
+            {object1['class']} с достоверностью {object1['cofidence']}
+            {object2['class']} с достоверностью {object3['cofidence']}
     """
     args_schema: Type[BaseModel] = InfoInput
     
