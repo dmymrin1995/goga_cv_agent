@@ -1,13 +1,10 @@
 from langchain.chat_models.gigachat import GigaChat
 from langchain.agents import AgentExecutor, create_gigachat_functions_agent
 
-from agent_tools import ClassesExtractTool, CVPredictTool, ImagePathsTool, LastPredictInfoTool
-
-with open("credentials.txt", 'r') as f:
-    credentials = f.read()
+from .agent_tools import ClassesExtractTool, CVPredictTool, ImagePathsTool, LastPredictInfoTool
 
 giga = GigaChat(
-    credentials=credentials, 
+    credentials="", 
     scope="GIGACHAT_API_PERS", 
     model="GigaChat",
     function_call=True,

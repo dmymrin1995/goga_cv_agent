@@ -1,12 +1,22 @@
 import os
 
-from agent_tools import *
+from typing import (
+    Optional, 
+    Type, 
+    Union,
+    List)
+
+from langchain.pydantic_v1 import BaseModel, Field
+from langchain.tools import BaseTool, StructuredTool, tool
+from langchain.callbacks.manager import (
+    CallbackManagerForToolRun
+)
 
 class AllFilesInput(BaseModel):
     image_path: str = Field(
-        default='../images/',
+        default='../agent/images',
         description="""
-            Путь к рабочей папке, ВСЕГДА равно ../images/'
+            Путь к рабочей папке, ВСЕГДА равно ../agent/images'
         """
     )
 
@@ -22,7 +32,7 @@ class ImagePathsTool(BaseTool):
     def _run(
         self, image_path: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ):
-        image_path = '../goga_cv_agent/images'
+        image_path = '../agent/images'
         files = os.listdir(image_path)
         files = [os.path.join(image_path, file) for file in files]
         return ",".join(files)

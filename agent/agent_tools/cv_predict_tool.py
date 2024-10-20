@@ -2,8 +2,18 @@ import os
 import json
 import uuid
 
-from agent_tools import *
-from cv_inference import make_predict
+from typing import (
+    Optional, 
+    Type, 
+    Union,
+    List)
+
+from langchain.pydantic_v1 import BaseModel, Field
+from langchain.tools import BaseTool, StructuredTool, tool
+from langchain.callbacks.manager import (
+    CallbackManagerForToolRun
+)
+from ..cv_inference import make_predict
 
 def save_to_json_file(data, filename='predictions.json'):
     unique_id = str(uuid.uuid4())
